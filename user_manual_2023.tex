@@ -1,0 +1,689 @@
+\documentclass[12pt]{article}
+
+\advance\oddsidemargin by -0.6in
+\advance\textwidth by 1.2in
+\advance\topmargin by -1.1in
+\advance\textheight by 2.2in
+\setlength{\unitlength}{1mm}
+
+\usepackage{bussproofs}
+\pagestyle{empty}
+\parindent=0mm
+
+
+\pagestyle{myheadings}
+\markboth{}{\today\hspace{4em} Logic for Computer Science}
+%\markboth{}{\today}
+\parskip=\medskipamount
+
+
+\begin{document}
+\thispagestyle{empty}
+
+Swansea University 
+
+Department of Computer Science \hfill  February, 2022    %\today
+
+\begin{center}
+\Large CSC375/CSCM75 Logic for Computer Science
+\end{center}
+
+\begin{center}
+{\Large\bf User Manual}
+\end{center} 
+
+
+\bigskip
+
+
+Instructions for using a proof editor for natural deduction
+proofs in propositional logic and for solving the lab assignment tasks.
+
+The system is implemented in Haskell and designed to run
+with interactive Haskell, ghci, which is included in
+the distribution of GHC (Glasgow Haskell Compiler).
+
+In the following it is assumed that one works under Linux, 
+and Haskell as well as the text editor Emacs are available. 
+It is also assumed that the prover files are in the directory \texttt{prover}.
+How to achieve this is described in the file \texttt{README}.
+
+
+\tableofcontents
+
+%% 1. Getting started
+%% 2. Assessment
+%% 3. Syntax of formulas
+%% 4. Proof commands 
+%% 5. Control commands
+%% 6. Saving and viewing your work
+%% 7. Finishing a session
+%% 8. Example of a session
+%% 9. Contact
+
+\section{Getting started}
+\label{sec-start}
+
+Move into the directory prover
+\begin{verbatim}
+cd prover
+\end{verbatim}
+
+Open the emacs editor:
+\begin{verbatim}
+emacs&  
+\end{verbatim}
+(or \verb|{xemacs&|). An Emacs reference card can be found at
+\begin{verbatim}
+http://www.cs.swan.ac.uk/~csulrich/tutorials/emacs-refcard.html
+\end{verbatim}
+Open a shell in Emacs:
+\begin{verbatim}
+M-x shell  
+\end{verbatim}
+(\texttt{M} is the Meta-key or the \texttt{ESC}-key).
+Now you can run Haskell from Emacs which gives
+you a better input interface than the terminal.
+
+Start interactive Haskell:
+\begin{verbatim}
+ghci
+\end{verbatim}
+%
+Load the file \texttt{Prover.hs}:
+\begin{verbatim}
+:l Prover.hs
+\end{verbatim}
+%
+Run the function main:
+\begin{verbatim}
+main
+\end{verbatim}
+%
+Now you can start proving: 
+
+First enter the formula you want to prove, 
+        then apply proof commands until all goals are solved.
+
+Each command applies a proof rule of natural deduction 
+        in a backwards fashion by replacing the current goal, 
+        which must match the conclusion of the selected proof rule,
+        by its premises which are then the new goals to be solved.
+%
+\begin{itemize}
+\item How to enter formulas is described in Section \label{sec-syntax}.
+\item How to apply proof commands is described in Section \label{sec-proof}.
+\item Other commands are described in section \label{sec-control}.
+\item How to save and view your work is described in Section \label{sec-save}.
+\item How to finish a session is described in Section \label{sec-finish}.
+\end{itemize}
+
+
+
+\section{Assessment}
+\label{sec-assess}
+%
+To assess your lab work we will ask you to show your work (see Section 6)
+and possibly demonstrate that you can carry out selected proofs.
+
+Before you start a proof, make sure you have your \emph{logic course notes} 
+at hand.
+
+Hint: ctrl-uparrow repeats the last user input. 
+
+When you finished a proof, the proof tree is written in the file 
+\texttt{pproof.tex} as a latex document that uses the macro package 
+\texttt{bussproof.sty} by Sam Buss.
+
+You may submit your proof as solution to Task 1 by typing
+%
+\begin{verbatim}
+submit 1
+\end{verbatim}
+%
+Similarly, for the other tasks.
+
+More details about this in Section~\ref{sec-save}.
+
+
+\section{Syntax of formulas}
+\label{sec-syntax}
+
+\subsection*{Short (and incomplete but usually sufficient) overview}
+%
+The usual bracketing rules for formulas apply.
+
+For example, \verb|A -> (B -> C)| can be written \verb|A -> B -> C|.
+%
+\begin{center}
+\begin{tabular}{llll}
+Conjunction     &   \verb|A and B|   &or&  \verb|A & B|\\ 
+Disjunction     &   \verb|A or B|    &or&  \verb!A | B!\\ 
+Implication     &    \verb|A -> B|   && \\
+Falsity         &   \verb|bot|       &or& \verb|F|\\
+Negation        &   \verb|not A|     &or& \verb|A -> bot|
+\end{tabular}
+\end{center}
+\verb|not A -> B|   is the same as  \verb|(not A) -> B|   and the same as 
+\verb|(A -> bot) -> B|.
+
+
+\subsection*{Detailed description}
+
+\begin{center}
+\begin{tabular}{llll}
+        &  Input syntax           
+        & Examples   
+        & Latex display 
+\\
+&&&
+\\
+Atomic formulas    
+        & any letter except \verb|F|, 
+        & \verb|A|, \verb|B|, \verb|C|, \verb|A'|, \verb|B2| 
+        & $A$, $B$, $C$, $A'$, $B2$
+             \\ & possibly primed and indexed &&
+\\
+Falsity               
+        & \verb|bot|, \verb|F| 
+        &
+        & $\bot$
+\\
+And                   
+        & \verb|and|, \verb|&|  
+        & \verb|A and B|, \verb|A & B|
+        & $A\land B$
+\\   
+Or                    
+        & \verb|or|, \verb!|!
+        & \verb|A or B|, \verb!A | B!
+        & $A \lor B$   
+\\
+Implies 
+        & \verb|->|                    
+        & \verb|A -> B|
+        & $A \to B$
+\\
+Negation
+        & \verb|not|
+        & \verb|not A|, \verb|A -> bot|
+        & $A \to \bot$
+\end{tabular}
+\end{center}
+\verb|not A| is interpreted as  \verb|A -> bot|.
+%                      
+Binding priorities (from strong to weak):  
+\verb|not|, \verb|and|, \verb|or|, \verb|->|.   
+
+Implication, conjunction and disjunction associate to the right.
+For example,  
+
+\verb|D -> not B -> A or B and C -> E| \qquad is the same as
+ 
+\verb|D -> ((not B) -> ((A or (B and C)) -> E))|.          
+
+
+
+
+\section{Proof commands}
+\label{sec-proof}
+
+Some of the commands below require an argument 
+(for example the command \verb|use| requires a label as argument,
+and the command \verb|andel| requires a formula as argument).
+Such commands can also be entered without argument,
+in which case you will be prompted to enter it 
+with an indication of what should be entered.
+
+\begin{center}
+\begin{tabular}{lll}
+Rule
+     & Input syntax 
+     & Explanation
+\\[1em]
+Assumption
+     & \verb|use u|
+     & use an available assumption labelled \verb|u|
+       \\ && any lower case letter can be a label
+\\[1em]
+$\land^+$
+     & \verb|andi| 
+     & And-introduction backwards: 
+     \\[0.5em]&&
+       \AxiomC{$A$}
+       \AxiomC{$B$}
+       \RightLabel{$\land^+$}
+       \BinaryInfC{$A \land B$}
+       \DisplayProof
+      \\[1em]&& The current goal must be of the form $A \land B$.
+      \\&& Two new goals, $A$ and $B$,  are created.
+\\[1em]
+$\land^-_\mathrm{l}$
+     & \verb|andel B| 
+     & And-elimination left backwards: 
+     \\[0.5em]&&
+       \AxiomC{$A\land B$}
+       \RightLabel{$\land^-_\mathrm{l}$}
+       \UnaryInfC{$A$}
+       \DisplayProof
+      \\[1em]&& If the goal was $A$, the new goal will be $A \land B$.
+      \\&& The formula $B$ is the missing part of the conjunction.
+\\[1em]
+$\land^-_\mathrm{r}$
+     & \verb|ander A| 
+     & And-elimination right backwards: 
+     \\[0.5em]&&
+       \AxiomC{$A\land B$}
+       \RightLabel{$\land^-_\mathrm{r}$}
+       \UnaryInfC{$B$}
+       \DisplayProof
+      \\[1em]&& If the goal was $B$, the new goal will be $A \land B$.
+\\[1em]
+$\to^+ u$
+     & \verb|impi u| 
+     & Implication-introduction backwards
+     \\[0.5em]&&
+       \AxiomC{$B$}
+       \RightLabel{$\to^+ u$}
+       \UnaryInfC{$A\to B$}
+       \DisplayProof
+      \\[1em]&& The current goal must be of the form $A \to B$.
+      \\&&    The new goals is $B$ which has the extra assumption $A$
+      \\&&   labelled by $u$ ($u$ must not have been used before)
+\\[1em]
+$\to^-$
+     & \verb|impe A| 
+     & Implication-elimination right backwards: 
+     \\[0.5em]&&
+       \AxiomC{$A\to B$}
+       \AxiomC{$A$}
+       \RightLabel{$\to^-$}
+       \BinaryInfC{$B$}
+       \DisplayProof
+      \\[1em]&& If the goal was $B$, there will be the two new goals,
+      \\&& $A \to B$, and $A$.
+      \\&& The formula $A$ is the missing part of the implication.
+\end{tabular}
+\end{center}
+
+
+
+\begin{center}
+\begin{tabular}{lll}
+Rule
+     & Input syntax 
+     & Explanation
+\\[1em]
+$\lor^+_{\mathrm{l}}$
+     & \verb|oril| 
+     & Or-introduction left backwards: 
+     \\[0.5em]&&
+       \AxiomC{$A$}
+       \RightLabel{$\lor^+_{\mathrm{l}}$}
+       \UnaryInfC{$A \lor B$}
+       \DisplayProof
+      \\[1em]&& The current goal must be of the form $A \lor B$.
+      \\&& The new goals is $A$.
+\\[1em]
+$\lor^+_{\mathrm{r}}$
+     & \verb|orir| 
+     & Or-introduction right backwards: 
+     \\[0.5em]&&
+       \AxiomC{$B$}
+       \RightLabel{$\lor^+_{\mathrm{r}}$}
+       \UnaryInfC{$A \lor B$}
+       \DisplayProof
+      \\[1em]&& The current goal must be of the form $A \lor B$.
+      \\&& The new goals is $B$.
+\\[1em]
+$\lor^-$
+     & \verb|ore A or B| 
+     & Or-elimination backwards: 
+     \\[0.5em]&&
+       \AxiomC{$A\lor B$}
+       \AxiomC{$A\to C$}
+       \AxiomC{$B\to C$}
+       \RightLabel{$\lor^-$}
+       \TrinaryInfC{$C$}
+       \DisplayProof
+      \\[1em]&& If the goal was $C$, there will be the three new goals,
+      \\&& $A \lor B$, $A\to C$, and $B\to C$.
+      \\&& The formula $A\lor B$ is the missing disjunction.
+\\[1em]
+$\mathrm{efq}$
+     & \verb|efq| 
+     & Ex-falso-quodlibet backwards     
+     \\[0.5em]&&
+       \AxiomC{$\bot$}
+       \RightLabel{$\mathrm{efq}$}
+       \UnaryInfC{$A$}
+       \DisplayProof
+      \\[1em]&& The goal can be any formula. 
+      \\&&The new goal is $\bot$.
+\\[1em]
+$\mathrm{raa}$
+     & \verb|raa| 
+     & Reductio-ad-absurdum backwards
+     \\[0.5em]&&
+       \AxiomC{$(A \to \bot) \to \bot$}
+       \RightLabel{$\mathrm{raa}$}
+       \UnaryInfC{$A$}
+       \DisplayProof
+      \\[1em]&& The goal can be any formula. 
+      \\&& The new goal is $(A \to \bot) \to \bot$, that is,
+           the double negation of $A$.
+\end{tabular}
+\end{center}
+
+
+
+\section{Control commands}
+\label{sec-control}
+
+\begin{center}
+\begin{tabular}{lll}
+Input syntax & Explanation & Example
+\\[1em]
+\verb|undo|   &  Undo a proof step & \\[1em]
+\verb|quit|   &  Leave the prover & \\[1em]
+\verb|new|    &  Start a new proof (without saving the current proof) & \\[1em]
+\verb|submit <i>| & Save your proof as a solution to Task \verb|<i>|
+                 & \verb|submit 1|\\
+              & as described in Section~\ref{sec-save}.&\\[1em]
+\verb|delete <i>|   & Delete the solution to Task \verb|<i>|
+                 & \verb|delete 1|\\[1em]
+?            &Brief explanation of available commands
+\end{tabular}
+\end{center}
+
+
+
+\section{Saving and viewing your work}
+\label{sec-save}
+
+When you finished a proof, that is, when you see the message
+\begin{verbatim}
+Current goal: No goal
+Proof complete.
+\end{verbatim}
+you can save it by entering
+\begin{verbatim}
+submit <i>
+\end{verbatim}
+where \verb|<i>| is the number of the task you just solved (for example $1$ or $2$).
+
+To view your solution(s), go to a terminal and enter (in the directory where
+the prover files are)
+%
+\begin{verbatim}
+pdflatex assignment
+\end{verbatim}
+Then, go to the filemanager and click on the file
+\begin{verbatim}
+assignment.pdf
+\end{verbatim}
+
+After finishing the next proof, you only need to repeat
+the \verb|submit| command and run \verb|pdflatex| again. 
+The pdf will be updated automatically.
+
+When you are working on a proof, you can view the current state
+of your (incomplete) proof at any time by entering in the terminal
+\begin{verbatim}
+pdflatex pproof
+\end{verbatim}
+The file \verb|pproof.pdf| will then contain the current state of your proof
+showing all open goals.
+
+
+\section{Finishing a session}
+\label{sec-finish}
+
+To finish a session, type
+\begin{verbatim}
+quit
+\end{verbatim}
+This will terminate the prover program. To leave Haskell, type
+\begin{verbatim}
+:q
+\end{verbatim}
+
+\section{Example of a session}
+\label{seq-session}
+
+
+The session below creates proofs of the formulas 
+$A\to A$, $A\land B \to B \land A$, and $A\lor B \to B \lor A$.
+
+Some errors have been inserted to demonstrate how they can be corrected.
+
+
+\begin{verbatim}
+uli@uli-Inspiron-5502:~/teach/lectures/logic/prover22/prover$ ghci
+GHCi, version 8.8.3: https://www.haskell.org/ghc/  :? for help
+Loaded package environment from /home/uli/.ghc/x86_64-linux-8.8.3/environments/default
+Prelude> :l Prover
+[ 1 of 11] Compiling MapAux           ( MapAux.hs, interpreted )
+[ 2 of 11] Compiling Parser           ( Parser.hs, interpreted )
+[ 3 of 11] Compiling Formula          ( Formula.hs, interpreted )
+[ 4 of 11] Compiling Occ              ( Occ.hs, interpreted )
+[ 5 of 11] Compiling Perhaps          ( Perhaps.hs, interpreted )
+[ 6 of 11] Compiling Proof            ( Proof.hs, interpreted )
+[ 7 of 11] Compiling Buss             ( Buss.hs, interpreted )
+[ 8 of 11] Compiling Step             ( Step.hs, interpreted )
+[ 9 of 11] Compiling ReadShow         ( ReadShow.hs, interpreted )
+[10 of 11] Compiling SystemL          ( SystemL.hs, interpreted )
+[11 of 11] Compiling Prover           ( Prover.hs, interpreted )
+Ok, 11 modules loaded.
+*Prover> main
+Enter goal formula X > A -> A
+
+ --------------------------- 
+Current goal: A -> A
+Enter command> impi u
+
+ --------------------------- 
+Available assumptions
+u : A
+Current goal: A
+Enter command> use u
+
+ --------------------------- 
+Current goal: No goal
+Proof complete.
+Enter quit, submit <i>, delete <i>, new, or ?> submit 1
+
+ --------------------------- 
+Current goal: No goal
+Proof complete.
+Enter quit, submit <i>, delete <i>, new, or ?> new
+Enter goal formula X > A & B -> B & A
+
+ --------------------------- 
+Current goal: (A & B) -> (B & A)
+Enter command> impi u
+
+ --------------------------- 
+Available assumptions
+u : A & B
+Current goal: B & A
+Enter command> andi
+
+ --------------------------- 
+Available assumptions
+u : A & B
+Current goal: B
+Enter command> ander
+
+ --------------------------- 
+Available assumptions
+u : A & B
+Current goal: B
+Enter missing formula X> A
+
+ --------------------------- 
+Available assumptions
+u : A & B
+Current goal: A & B
+Enter command> use u
+
+ --------------------------- 
+Available assumptions
+u : A & B
+Current goal: A
+Enter command> andel B
+
+ --------------------------- 
+Available assumptions
+u : A & B
+Current goal: A & B
+Enter command> use u
+
+ --------------------------- 
+Current goal: No goal
+Proof complete.
+Enter quit, submit <i>, delete <i>, new, or ?> submit 2
+
+ --------------------------- 
+Current goal: No goal
+Proof complete.
+Enter quit, submit <i>, delete <i>, new, or ?> new
+Enter goal formula X > A or B -> B or A
+
+ --------------------------- 
+Current goal: (A or B) -> (B or A)
+Enter command> impi u
+
+ --------------------------- 
+Available assumptions
+u : A or B
+Current goal: B or A
+Enter command> ore
+
+ --------------------------- 
+Available assumptions
+u : A or B
+Current goal: B or A
+Enter missing formula of the form  X or Y> A or B
+
+ --------------------------- 
+Available assumptions
+u : A or B
+Current goal: A or B
+Enter command> use u
+
+ --------------------------- 
+Available assumptions
+u : A or B
+Current goal: A -> (B or A)
+Enter command> impi
+
+ --------------------------- 
+Available assumptions
+u : A or B
+Current goal: A -> (B or A)
+Enter assumption variable> v
+
+ --------------------------- 
+Available assumptions
+v : A
+u : A or B
+Current goal: B or A
+Enter command> orir
+
+ --------------------------- 
+Available assumptions
+v : A
+u : A or B
+Current goal: A
+Enter command> use u
+Assumption doesn't fit or doesn't exist, try again> use v
+
+ --------------------------- 
+Available assumptions
+u : A or B
+Current goal: B -> (B or A)
+Enter command> impi w
+
+ --------------------------- 
+Available assumptions
+w : B
+u : A or B
+Current goal: B or A
+Enter command> andi
+Rule not applicable, try again> orir
+
+ --------------------------- 
+Available assumptions
+w : B
+u : A or B
+Current goal: A
+Enter command> undo
+Rule not applicable, try again> undo
+
+ --------------------------- 
+Available assumptions
+w : B
+u : A or B
+Current goal: B or A
+Enter command> oril
+
+ --------------------------- 
+Available assumptions
+w : B
+u : A or B
+Current goal: B
+Enter command> use w
+
+ --------------------------- 
+Current goal: No goal
+Proof complete.
+Enter quit, submit <i>, delete <i>, new, or ?> submit 3
+
+ --------------------------- 
+Current goal: No goal
+Proof complete.
+Enter quit, submit <i>, delete <i>, new, or ?> quit
+*Prover> :q
+Leaving GHCi.
+uli@uli-Inspiron-5502:~/teach/lectures/logic/prover22/prover$ 
+\end{verbatim}
+
+Since the proofs were commited as solutions to Tasks 1, 2, and 3, the file
+\verb|assignment.pdf| contains (after running \verb|pdflatex assignment|)
+all three proofs rendered as trees.
+
+
+
+\section{Contact}
+\label{sec-contact}
+
+To report errors or make suggestions for improvements please email
+\begin{verbatim}
+u.berger@swansea.ac.uk 
+\end{verbatim}
+
+\end{document}
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

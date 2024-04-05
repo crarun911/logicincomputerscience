@@ -1,0 +1,38 @@
+Sequent calculus Laft and Right rules
+
+G |- A, D    G |- B, D
+------------------------  &-Right
+    G |- A&B, D
+
+
+    G, A,B  |- C, D
+----------------------  &-Left
+    G, A & B |- C, D
+
+    G |- A  
+-----------------  or-Right1
+    G |- A or B
+
+    G |- B  
+-----------------  or-Right2
+    G |- A or B
+
+ G, A |- C      G, B |- C  
+---------------------------  or-Left
+    G, A or B |- C
+
+
+G, A |- B
+------------   ->-Right
+G |- A -> B
+
+
+ G |- A     G, B |- C
+----------------------- ->-Lift
+ G, A -> B |- C
+
+G |- A      G, A |- B
+----------------------- cut
+  G |- B
+
+Sequent calculus is sound and complete.

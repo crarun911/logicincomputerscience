@@ -1,0 +1,19 @@
+{\small
+\RightLabel{$$}
+\AxiomC{$\mathbf{?2} : A(\mathrm{x})$}
+\RightLabel{$\exists^+$}
+\UnaryInfC{$\exists x\; A(x)$}
+\RightLabel{$\to^+\,u : \forall x\; (A(x)\to \bot)\to \bot$}
+\UnaryInfC{$(\forall x\; (A(x)\to \bot)\to \bot)\to \exists x\; A(x)$}
+\DisplayProof
+
+}
+\bigskip
+
+ Current goal:\quad$\mathbf{?2} : A(\mathrm{x})$
+\medskip
+
+Assumptions available:\begin{tabular}{ll}
+$u$\ :&$\forall x\; (A(x)\to \bot)\to \bot$\\
+
+\end{tabular}

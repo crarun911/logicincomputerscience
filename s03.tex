@@ -1,0 +1,19 @@
+\RightLabel{$$}
+\AxiomC{$u : A\lor B$}
+\RightLabel{$$}
+\AxiomC{$v : A$}
+\RightLabel{$\lor^+\mathrm{r}$}
+\UnaryInfC{$B\lor A$}
+\RightLabel{$\to^+\,v : A$}
+\UnaryInfC{$A\to (B\lor A)$}
+\RightLabel{$$}
+\AxiomC{$w : B$}
+\RightLabel{$\lor^+\mathrm{l}$}
+\UnaryInfC{$B\lor A$}
+\RightLabel{$\to^+\,w : B$}
+\UnaryInfC{$B\to (B\lor A)$}
+\RightLabel{$\lor^-$}
+\TrinaryInfC{$B\lor A$}
+\RightLabel{$\to^+\,u : A\lor B$}
+\UnaryInfC{$(A\lor B)\to (B\lor A)$}
+\DisplayProof

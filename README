@@ -1,0 +1,42 @@
+24-10-2018
+
+Instructions for downloading a proof editor for natural deduction
+proofs in propositional logic.
+
+It is assumed that one works under Linux (Windows users should contact me 
+for instructions).
+
+The system is implemented in Haskell and designed to run
+with interactive Haskell, ghci, which is included in
+the distribution of GHC (Glasgow Haskell Compiler).
+It uses latex for displaying proof trees.
+
+It strongly recommended to run Haskell from the text editor emacs.
+
+In the Linux lab, Haskell, latex, and emacs are available.
+
+Download the file proverfiles.zip
+ 
+Unzip it:
+
+unzip proverfiles.zip
+
+This will create the directory prover containing
+the Haskell code of the prover.
+
+Move into that directory:
+
+cd prover
+
+How to use the prover is described in the USER-MANUAL.
+
+Use the text editor emacs to read the USER-MANUAL and run the prover:
+
+emacs&
+
+For details on how to run the prover see the USER-MANUAL.
+
+
+Ulrich Berger
+
+u.berger@swansea.ac.uk

@@ -1,0 +1,371 @@
+4-11-2019
+
+Instructions for using a proof editor for natural deduction
+proofs in propositional logic and for creating the lab assignment 
+submission.
+
+The system is implemented in Haskell and designed to run
+with interactive Haskell, ghci, which is included in
+the distribution of GHC (Glasgow Haskell Compiler).
+
+In the following it is assumed that one works under Linux and the
+Haskell and the text editor emacs are available, and the prover files 
+are in the directory prover.
+
+How to achieve this is described in the file README
+
+Contents
+
+1. Getting started
+2. Submitting your proofs
+3. Syntax of formulas
+4. Proof commands 
+5. Control commands
+6. Finishing a session
+7. Example of a session
+8. Resuming a session
+9. Contact
+
+1. Getting started
+==================
+
+Move into the directory prover
+
+cd prover
+
+Open the emacs editor:
+
+emacs&  (or xemacs&, an Emacs reference card can be found at
+         http://www.cs.swan.ac.uk/~csulrich/tutorials/emacs-refcard.html)
+
+Open a shell in emacs:
+
+M-x shell  (M is the Meta-key or the ESC-key)
+
+Now you can run Haskell from emacs which gives
+you a better input interface than the terminal.
+
+Start interactive Haskell:
+
+ghci
+
+Load the file Prover.hs:
+
+:l Prover.hs
+
+Run the function main:
+
+main
+
+This will open a dvi file displaying the
+current state of your proof and giving
+information about the current goal and
+the available commands.
+
+The instructions what to do next are given at the command prompt
+(not in the dvi).
+
+You will be asked for all contributor's details.
+
+Example: Kurt Goedel (3, 123456), Alan Turing (M, 333444), Andrey Kolmogorov (M, 654321)
+
+Please enter all contributor's details at once (no line break, no <enter>)
+
+Your assignment will be created as the file
+
+assignment.pdf
+
+This file will initially contain only your details, but will later
+be filled with your solutions as described below. You can view the
+file by clicking on it in the file manager Dolphin (to be found 
+under System).
+
+Your lab work will be assessed by inspecting the file on the screen 
+(no printing necessary, solutions cannot be emailed later, but must 
+be shown during the lab session).
+
+Before you start a proof make sure you have your logic course notes 
+at hand.
+
+Hint: ctrl-uparrow repeats the last user input. 
+
+2. Submitting your proofs
+=========================
+
+When you finished a proof, the proof tree is written in the file 
+pproof.tex as a latex document that uses the macro package 
+bussproof.sty by Sam Buss.
+
+You may submit your proof as solution to question <i> by typing
+
+submit <i>
+
+For example, 
+
+submit 1 
+  
+will submit your proof as solution to Question 1
+
+3. Syntax of formulas
+=====================
+
+Short (and incomplete but usually sufficient) overview:
+
+The usual bracketing rules for formulas apply.
+For example, A -> (B -> C) can be written A -> B -> C.
+
+Conjunction can be written              A and B   or    A & B 
+Disjunction can be written              A or B    or    A | B 
+Falsity can be written                  bot       or    F   
+Negation can be written                 not A     or    A -> bot
+
+not A -> B   is the same as  (not A) -> B   and the same as 
+(A -> bot) -> A
+
+
+Detailed description:
+
+                        input syntax               examples
+
+Atomic formulas       any letter except F,       A B C
+                      primed and with indices    A1 A2 A25 A' B'' C7'
+
+Falsity               Bot  bot  F _|_  \bot
+
+And                   and  & \land          A and B    A & B   A \land B
+
+Or                    or  |  \lor           A or B     A | B   A \lor B
+
+Implies               ->  \to               A -> B     A \to B         
+
+Negation              not   -               not A      - A
+                      the negation of A is interpreted as  A -> bot
+                      
+Binding priorities (from strong to weak):  not, and, or, ->   
+
+Implication conjunction and disjunction associate to the right.
+
+Example:  
+
+D -> not B -> A or B and C -> bot  
+
+is the same as
+
+D -> ((not B) -> ((A or (B and C)) -> bot))          
+
+and also the same as
+
+D -> (B -> bot) -> not (A or B and C)
+
+
+4. Proof commands
+=================
+
+use u     use an available assumption with label u
+
+use       As above, but since the label u is missing 
+          you are prompted to enter it.
+
+andi      And-introduction backwards: 
+
+                 A     B
+                ---------
+                  A & B
+
+          The current goal must be of the form A & B.
+          Two new goals are created.
+
+
+andel B   And-elimination left backwards: 
+
+                 A & B
+               ---------
+                   A
+
+          If the goal was A, the new goal will be A & B.
+
+andel     As above, but since the formula B is missing you are 
+          prompted to enter it.
+
+ander A   And-elimination left backwards: 
+
+                 A & B
+               ---------
+                   B
+
+          If the goal was B, the new goal will be A & B.
+
+ander     As above, but since the formula A is missing you are 
+          prompted to enter it.
+
+impi u    Implication-introduction backwards
+
+                   B
+               --------- u : A
+                 A -> B
+
+          The current goal must be of the form A -> B.
+          The new goals is B. u must be a new label 
+          (you may use u, v, w, x, y, z, u1, etc.)
+
+impi      As above, but since the label is missing you are 
+          prompted to enter it.
+
+impe A    Implication-elimination backwards
+
+              A -> B    A
+             ------------- 
+                   B
+
+          If the goal was B, there will be two new 
+          goals: A -> B, and A.
+
+impe      As above, but since the formula A is missing you are 
+          prompted to enter it.
+
+oril      Or-introduction left backwards
+
+                   A
+               --------- 
+                 A or B
+
+          The current goal must be of the form A or B.
+          The new goals is A.
+
+orir      Or-introduction right backwards
+
+                   B
+               --------- 
+                 A or B
+
+          The current goal must be of the form A or B.
+          The new goals is B.
+          
+ore A or B   Or-elimination backwards
+
+                A or B    A -> C    B -> C
+               ---------------------------- 
+                           C
+
+          If the goal was C, there will be three new 
+          goals: A or B, A -> C, and B -> C.
+
+ore       As above, but since the formula A or B is missing you are 
+          prompted to enter it.
+
+                
+efq       ex-falso-quodlibet backwards     
+
+                 bot
+                -----
+                  A
+
+          The goal can be any formula. The new goal will be bot.
+
+raa       reductio-ad-absurdum backwards
+
+               not (not A)
+             --------------
+                   A
+
+          The goal can be any formula A. 
+          The new goal will be the double negation of A.
+
+
+
+5. Control commands
+===================
+
+undo              undo a proof step
+quit              leave the prover
+new               start a new proof (without saving current proof)
+submit <i>        as described in Section 2. above
+delete <i>        delete Question <i> from your assignment
+?                 brief explanation of available commands
+
+6. Finishing a session
+======================
+
+To finish a session type
+
+quit
+
+to terminate the prover program, and then
+
+:q
+
+to leave Haskell.
+
+
+7. Example of a session
+=======================
+
+$ ghci
+GHCi, version 7.10.3: http://www.haskell.org/ghc/  :? for help
+Prelude> :l Prover
+[ 1 of 11] Compiling MapAux           ( MapAux.hs, interpreted )
+[ 2 of 11] Compiling SystemL          ( SystemL.hs, interpreted )
+[ 3 of 11] Compiling Perhaps          ( Perhaps.hs, interpreted )
+[ 4 of 11] Compiling Parser           ( Parser.hs, interpreted )
+[ 5 of 11] Compiling Formula          ( Formula.hs, interpreted )
+[ 6 of 11] Compiling Proof            ( Proof.hs, interpreted )
+[ 7 of 11] Compiling Buss             ( Buss.hs, interpreted )
+[ 8 of 11] Compiling Occ              ( Occ.hs, interpreted )
+[ 9 of 11] Compiling Step             ( Step.hs, interpreted )
+[10 of 11] Compiling ReadShow         ( ReadShow.hs, interpreted )
+[11 of 11] Compiling Prover           ( Prover.hs, interpreted )
+Ok, modules loaded: Parser, Prover, Perhaps, Formula, Proof, Buss, Step, ReadShow, SystemL, Occ, MapAux.
+*Prover> main
+Please enter name, level and studtno of all contributors  (max 3, all in one line):
+ [Example: Ada Lovelace (3, 123456), Alan Turing (M, 333333), Charles Babbage (3, 543211)
+Enter goal formula X > A -> A
+Enter command> impi u
+Enter command> use u
+Proof complete.
+Enter quit, submit <i>, delete <i>, new, or ?> submit 1
+Proof complete.
+Enter quit, submit <i>, delete <i>, new, or ?> new
+Enter goal formula X > A -> B or A
+Enter command> impi u
+Enter command> orir
+Enter command> use u
+Proof complete.
+Enter quit, submit <i>, delete <i>, new, or ?> submit 2
+Proof complete.
+Enter quit, submit <i>, delete <i>, new, or ?> quit
+*Prover> :q
+Leaving GHCi.
+$ 
+
+After that session the file assignment.pdf contains proof trees 
+for proofs of the formulas A -> A (assigned to Question 1) 
+and A -> B or A (assigned to Question 2).
+
+
+8. Resuming a session
+=====================
+
+If you terminate a session and later resume it, your previously solved
+questions will be saved.
+
+Instead of main you can use
+
+main0 
+
+if the xdvi window is still open and
+
+main1
+
+if you need to open the xdvi window again.
+
+In both cases you won't be asked for your details again.
+
+
+9. Contact
+==========
+
+To report errors or make suggestions for improvements please email
+
+u.berger@swansea.ac.uk 
+
+Ulrich Berger

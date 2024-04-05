@@ -1,0 +1,21 @@
+\RightLabel{$$}
+\AxiomC{$u : (A\lor (A\to \bot))\to \bot$}
+\RightLabel{$$}
+\AxiomC{$u : (A\lor (A\to \bot))\to \bot$}
+\RightLabel{$$}
+\AxiomC{$v : A$}
+\RightLabel{$\lor^+\mathrm{l}$}
+\UnaryInfC{$A\lor (A\to \bot)$}
+\RightLabel{$\to^-$}
+\BinaryInfC{$\bot$}
+\RightLabel{$\to^+\,v : A$}
+\UnaryInfC{$A\to \bot$}
+\RightLabel{$\lor^+\mathrm{r}$}
+\UnaryInfC{$A\lor (A\to \bot)$}
+\RightLabel{$\to^-$}
+\BinaryInfC{$\bot$}
+\RightLabel{$\to^+\,u : (A\lor (A\to \bot))\to \bot$}
+\UnaryInfC{$((A\lor (A\to \bot))\to \bot)\to \bot$}
+\RightLabel{$\mathrm{raa}$}
+\UnaryInfC{$A\lor (A\to \bot)$}
+\DisplayProof

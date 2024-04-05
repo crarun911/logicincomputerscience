@@ -1,0 +1,116 @@
+New commands combining elimination rules with the assumption rule
+=================================================================
+
+andel u
+=======       
+ 
+? A  
+
+becomes
+
+u : A and B
+-----------  andel
+  A
+
+
+similarly ander u
+
+
+ore u
+=====
+
+? C  
+
+becomes
+
+u : A or B     ? A -> C       ? B -> C
+---------------------------------------  ore
+                  C
+
+impe u
+======
+
+? B
+
+becomes
+
+u : A -> B     ? A
+--------------------  impe
+        B
+
+Or, more generally
+
+impe u
+======
+
+? B
+
+becomes
+
+u : A1 -> A2 ->... -> An -> B     ? A1
+--------------------------------------- impe
+    A2 -> ... -> An -> B       ? A2
+  ---------------------------------- impe     
+ 
+                ...
+   
+          An -> B     ? An
+         ------------------  impe
+                 B
+
+
+
+alle u
+======
+
+? A(t)  
+
+becomes
+
+u : all x A(x) 
+---------------  alle
+    A(t)
+
+
+or, more generally
+
+alle u
+======
+
+? A(t1,...tn)  
+
+becomes
+
+u : all x1 all x2 ... all xn A(x1,x2,...,xn)   
+--------------------------------------------  alle    
+           all x2 ... all xn A(t1,x2,...,xn)   
+          ----------------------------------  alle
+
+                          ...
+
+                     all xn A(t1,t2,...,xn)   
+                   ------------------------  alle
+                            A(t1,t2,...,tn)   
+
+
+                       
+exe u
+=====
+
+? C  
+
+becomes
+
+u : ex x A(x)   ? all x (A(x) -> C) 
+------------------------------------  exe
+             C
+
+
+
+       
+
+
+
+
+
+

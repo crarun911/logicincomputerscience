@@ -1,0 +1,9 @@
+\contentsline {section}{\numberline {1}Getting started}{1}%
+\contentsline {section}{\numberline {2}Assessment}{3}%
+\contentsline {section}{\numberline {3}Syntax of formulas}{3}%
+\contentsline {section}{\numberline {4}Proof commands}{4}%
+\contentsline {section}{\numberline {5}Control commands}{6}%
+\contentsline {section}{\numberline {6}Saving and viewing your work}{6}%
+\contentsline {section}{\numberline {7}Finishing a session}{7}%
+\contentsline {section}{\numberline {8}Example of a session}{7}%
+\contentsline {section}{\numberline {9}Contact}{11}%

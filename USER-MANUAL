@@ -1,0 +1,413 @@
+1-03-2024
+
+Instructions for using a proof editor for natural deduction
+proofs in propositional logic and for creating the lab assignment 
+submission.
+
+The system is implemented in Haskell and runs with interactive Haskell,
+ghci, which is included in the distribution of GHC (Glasgow Haskell Compiler).
+
+In the following it is assumed that one works under Linux, 
+and that Haskell as well as the text editor emacs are available. 
+It is also assumed that the prover files are in the directory where this USER-MANUAL sits.
+How to achieve this is described on the lab sheet.
+
+
+Contents
+
+1. Getting started
+2. Syntax of formulas
+3. Proof commands
+   3.1 How to apply a proof command and view the result
+   3.2 List of proof commands and their associated proof rules
+4. Control commands
+5. Saving your work
+6. Finishing a session
+7. Example of a session
+8. Contact
+
+1. Getting started
+==================
+
+Open the emacs editor:
+
+emacs&  (or xemacs&)
+
+An Emacs reference card can be found at
+
+https://www.gnu.org/software/emacs/refcards/pdf/refcard.pdf
+
+Open a shell in emacs:
+
+M-x shell  (M is the Meta-key or the ESC-key)
+
+Now you can run Haskell from emacs which gives
+you a better input interface than the terminal.
+
+Start interactive Haskell:
+
+ghci
+
+Load the file Prover.hs:
+
+:l Prover.hs
+
+Run the function main:
+
+main
+
+Now you can start proving: 
+
+First enter the formula you want to prove (see Section 2), and then
+apply proof commands until all goals are solved (see Section 3).
+  
+
+2. Syntax of formulas
+=====================
+
+Short (and incomplete but usually sufficient) overview:
+
+Capital letters, typpically A, B, C, denote arbitrary formulas of propositional logic
+Falsity can be written                  bot  or  F
+Implication can be written              A -> B
+Conjunction can be written              A and B   or    A & B 
+Disjunction can be written              A or B    or    A | B 
+Negation can be written                 not A     or    A -> bot
+
+The usual bracketing rules for formulas apply.
+For example, A -> (B -> C) can be written A -> B -> C.
+
+not A -> B   is the same as  (not A) -> B   and the same as  (A -> bot) -> A
+
+
+Detailed description:
+
+                        input syntax               examples
+
+Arbitrary formulas    any letter except F,       A B C
+                      primed and with indices    A1 A2 A25 A' B'' C7'
+
+Falsity               Bot  bot  F _|_  \bot
+
+And                   and  &                     A and B    A & B   
+
+Or                    or  |                      A or B     A | B   
+
+Implies               ->                         A -> B              
+
+Negation              not                        not A      A -> bot
+                      the negation of A is always interpreted as  A -> bot
+                      
+Binding priorities (from strong to weak):  not, and, or, ->   
+
+Implication conjunction and disjunction associate to the right.
+
+Example:  
+
+D -> not B -> A or B and C -> bot  
+
+is the same as
+
+D -> ((not B) -> ((A or (B and C)) -> bot))          
+
+and also the same as
+
+D -> (B -> bot) -> not (A or B and C)
+
+
+
+3. Proof commands
+=================
+
+3.1 How to apply a proof command and view the result
+====================================================
+
+Each proof command applies a proof rule of natural deduction
+in a backwards fashion:
+
+ - A rule can be applied if the current goal matches the conclusion of the rule.
+
+ - A rule is applied by typing its name and, for some rules, further information.
+
+ - The effect of applying a rule is that the current goal is replaced
+   by new goals, one for each premise of the rule.
+
+Some of the commands below require an argument (for example the command use requires a label).
+Each of these commands can also be entered without argument, in which case you will be
+prompted to enter it with an indication of what should be entered.
+
+
+Hint: ctrl-uparrow repeats the last user input. 
+
+When you finished a proof, the proof tree is written in the file 
+pproof.tex as a latex document that uses the macro package 
+bussproof.sty by Sam Buss.
+
+You can view incomplete intermediate stages of your proof
+by typing in the terminal
+
+pdflatex pproof
+
+and then clicking on pproof.pdf in the file manager.
+
+After each proof step you may repeat the above command pdflatex pproof and
+pproof.pdf will be upodated.
+
+
+You may submit your proof as solution to question <i> by typing
+
+submit <i>
+
+For example, 
+
+submit 1 
+  
+will submit your proof as solution to Question 1
+
+More details about this in Section 6.
+
+
+3.2 List of proof commands and their associated proof rules
+===========================================================
+
+use u     use an available assumption with label u
+
+andi      And-introduction backwards: 
+
+                 A     B
+                ---------
+                  A & B
+
+          The current goal must be of the form A & B.
+          Two new goals are created.
+
+
+andel B   And-elimination left backwards: 
+
+                 A & B
+               ---------
+                   A
+
+          If the goal was A, the new goal will be A & B.
+
+
+ander A   And-elimination left backwards: 
+
+                 A & B
+               ---------
+                   B
+
+          If the goal was B, the new goal will be A & B.
+
+
+impi u    Implication-introduction backwards
+
+                   B
+               --------- u : A
+                 A -> B
+
+          The current goal must be of the form A -> B.
+          The new goals is B. u must be a new label 
+          (you may use u, v, w, x, y, z, u1, etc.)
+
+
+impe A    Implication-elimination backwards
+
+              A -> B    A
+             ------------- 
+                   B
+
+          If the goal was B, there will be two new 
+          goals: A -> B, and A.
+
+
+oril      Or-introduction left backwards
+
+                   A
+               --------- 
+                 A or B
+
+          The current goal must be of the form A or B.
+          The new goals is A.
+
+
+orir      Or-introduction right backwards
+
+                   B
+               --------- 
+                 A or B
+
+          The current goal must be of the form A or B.
+          The new goals is B.
+          
+
+ore A or B   Or-elimination backwards
+
+                A or B    A -> C    B -> C
+               ---------------------------- 
+                           C
+
+          If the goal was C, there will be three new 
+          goals: A or B, A -> C, and B -> C.
+
+                
+efq       ex-falso-quodlibet backwards     
+
+                 bot
+                -----
+                  A
+
+          The goal can be any formula. The new goal will be bot.
+
+
+raa       reductio-ad-absurdum backwards
+
+               not (not A)
+             --------------
+                   A
+
+          The goal can be any formula A. 
+          The new goal will be the double negation of A.
+
+
+
+5. Control commands
+===================
+
+undo              undo a proof step
+quit              leave the prover
+new               start a new proof (without saving current proof)
+submit <i>        as described in Section 2. above
+delete <i>        delete Question <i> from your assignment
+?                 brief explanation of available commands
+
+
+6. Saving and viewing your work
+===============================
+
+When you finished a proof, that is, when you see the message
+
+Current goal: No goal
+Proof complete.
+
+then you can save it by entering
+
+submit i
+
+where i is the number of the task you just solved.
+
+To view your solution(s), go to a terminal at the terminal
+
+pdflatex assignment
+
+Then, go to the filemanager and click on the file
+
+assignment.pdf
+
+After finishing the next proof, you only need to repeat
+the submit command and run pdflatex again. 
+The pdf will be updated automatically.
+
+
+7. Finishing a session
+======================
+
+To finish a session type
+
+quit
+
+to terminate the prover program, and then
+
+:q
+
+to leave Haskell.
+
+
+8. Example of a session
+=======================
+
+ulrich@ulrich-Inspiron-5502:~/teach/lectures/logic/provertest/prover$ ghci
+GHCi, version 8.8.4: https://www.haskell.org/ghc/  :? for help
+Loaded package environment from /home/ulrich/.ghc/x86_64-linux-8.8.4/environments/default
+Prelude> :l Prover
+[ 1 of 11] Compiling MapAux           ( MapAux.hs, interpreted )
+[ 2 of 11] Compiling Parser           ( Parser.hs, interpreted )
+[ 3 of 11] Compiling Formula          ( Formula.hs, interpreted )
+[ 4 of 11] Compiling Occ              ( Occ.hs, interpreted )
+[ 5 of 11] Compiling Perhaps          ( Perhaps.hs, interpreted )
+[ 6 of 11] Compiling Proof            ( Proof.hs, interpreted )
+[ 7 of 11] Compiling Buss             ( Buss.hs, interpreted )
+[ 8 of 11] Compiling Step             ( Step.hs, interpreted )
+[ 9 of 11] Compiling ReadShow         ( ReadShow.hs, interpreted )
+[10 of 11] Compiling SystemL          ( SystemL.hs, interpreted )
+[11 of 11] Compiling Prover           ( Prover.hs, interpreted )
+Ok, 11 modules loaded.
+*Prover> main
+Enter goal formula X > A & B -> B & A
+
+ --------------------------- 
+Current goal: (A & B) -> (B & A)
+Enter command> impi u
+
+ --------------------------- 
+Available assumptions
+u : A & B
+Current goal: B & A
+Enter command> andi
+
+ --------------------------- 
+Available assumptions
+u : A & B
+Current goal: B
+Enter command> ander A
+
+ --------------------------- 
+Available assumptions
+u : A & B
+Current goal: A & B
+Enter command> use u
+
+ --------------------------- 
+Available assumptions
+u : A & B
+Current goal: A
+Enter command> andel B
+
+ --------------------------- 
+Available assumptions
+u : A & B
+Current goal: A & B
+Enter command> use u
+
+ --------------------------- 
+Current goal: No goal
+Proof complete.
+Enter quit, submit <i>, delete <i>, new, or ?> submit 1
+
+ --------------------------- 
+Current goal: No goal
+Proof complete.
+Enter quit, submit <i>, delete <i>, new, or ?> new
+Enter goal formula X > A or B -> B or A
+
+ --------------------------- 
+Current goal: (A or B) -> (B or A)
+Enter command> impi u
+
+ --------------------------- 
+Available assumptions
+u : A or B
+Current goal: B or A
+Enter command>
+
+... and so on
+
+
+9. Contact
+==========
+
+To report errors or make suggestions for improvements please email
+
+u.berger@swansea.ac.uk 
+
+Ulrich Berger
